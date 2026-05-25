@@ -1,10 +1,10 @@
 import { AppShell } from "@/components/AppShell";
-import { LiveMarketDashboard } from "@/components/LiveMarketDashboard";
+import { NewsImpactClient } from "@/components/NewsImpactClient";
 
 export default function NewsImpactPage() {
   return (
     <AppShell>
-      <LiveMarketDashboard mode="news" />
+      <NewsImpactClient />
     </AppShell>
   );
 }

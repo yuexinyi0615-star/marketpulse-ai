@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "build:pages": "GITHUB_PAGES=true next build --webpack",
+    "build:pages": "echo \"GitHub Pages static export is not supported while server API routes are enabled. Use npm run build and deploy to a Next.js server host.\"",
     "start": "next start",
     "lint": "next lint"
   },

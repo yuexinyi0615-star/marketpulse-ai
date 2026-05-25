@@ -7,7 +7,8 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Next.js App Router
 - TypeScript
 - Tailwind CSS
-- Supabase placeholder client
+- Supabase client and server storage route helpers
+- Daily Financial News Collection API routes
 - Browser-loaded public market quotes and financial news RSS
 - Static report and learning templates
 
@@ -33,9 +34,25 @@ Copy `.env.example` to `.env.local` when adding real services. Do not commit sec
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEWSAPI_API_KEY=
+FMP_API_KEY=
 ```
 
-The current GitHub Pages build does not require API keys. Live quotes and news are loaded in the visitor's browser from public sources, and watchlist settings are stored in browser local storage. For production-grade reliability, route licensed data providers through Supabase Edge Functions or another backend so private keys are never exposed.
+`SUPABASE_SERVICE_ROLE_KEY`, `NEWSAPI_API_KEY`, and `FMP_API_KEY` are server-only values. Do not prefix them with `NEXT_PUBLIC_`, and do not commit them.
+
+If provider or Supabase keys are missing, `/api/news/fetch` and `/api/news/list` return mock fallback articles so the News Impact page still works during development.
+
+## Daily News Collection
+
+Apply the Supabase migration in `supabase/migrations/202605250001_create_news_articles.sql` to create `news_articles`.
+
+Routes:
+
+- `POST /api/news/fetch`: fetches daily financial news from NewsAPI first, then Financial Modeling Prep if configured, normalizes related tickers, and stores articles in Supabase.
+- `GET /api/news/list`: lists stored articles from Supabase with mock fallback data if credentials are missing.
+
+Tracked themes include U.S. stock market, Federal Reserve, interest rates, inflation, Treasury yields, technology stocks, energy, banks, crypto, commodities, major earnings, selected large-cap tickers, and sector ETFs.
 
 ## Run Locally
 
@@ -50,13 +67,11 @@ npm run dev
 npm run build
 ```
 
-## GitHub Pages
+## Deployment
 
-This repo includes a GitHub Actions workflow that builds the static Next.js export and deploys it to GitHub Pages. After the code is pushed, enable Pages in the repository settings with **GitHub Actions** as the source. The site will publish at:
+The news collection module uses server-side Next.js API routes, so GitHub Pages static hosting cannot run the full app. Deploy to a Next.js server host such as Vercel, Netlify, Render, or a Node server when using `/api/news/fetch` and Supabase storage.
 
-```text
-https://yuexinyi0615-star.github.io/marketpulse-ai/
-```
+The included GitHub Actions workflow now validates `npm run build` for the server app instead of attempting a static Pages export.
 
 ## Disclaimer
 
