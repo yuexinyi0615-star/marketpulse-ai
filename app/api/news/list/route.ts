@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("news_articles")
-    .select("id,title,source,url,published_time,raw_description,related_tickers,provider,created_time")
+    .select("id,title,source,url,published_time,raw_description,related_tickers,provider,created_time,short_summary,why_it_matters_financially,related_companies,related_etfs,related_sectors,market_classification,market_impact_score,confidence_score,short_term_impact,medium_term_impact,risk_factors,alternative_scenario,beginner_explanation,impact_generated_at,impact_model")
     .order("published_time", { ascending: false, nullsFirst: false })
     .limit(limit);
 

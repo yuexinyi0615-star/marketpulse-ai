@@ -20,6 +20,8 @@ type FetchResponse = {
   count: number;
   stored: number;
   storage: string;
+  impact_analyzed: number;
+  impact_stored: number;
   articles: NewsArticle[];
   error?: string;
 };
@@ -40,6 +42,36 @@ function sourceTone(source: string): "teal" | "amber" | "slate" {
   if (source === "supabase") return "teal";
   if (source.includes("mock")) return "amber";
   return "slate";
+}
+
+function classificationTone(classification: NewsArticle["market_classification"]): "teal" | "amber" | "red" | "slate" {
+  if (classification === "bullish") return "teal";
+  if (classification === "bearish") return "red";
+  if (classification === "neutral") return "amber";
+  return "slate";
+}
+
+function impactScoreTone(score: number | null | undefined) {
+  if (!score) return "bg-slate-300";
+  if (score >= 70) return "bg-teal-600";
+  if (score >= 40) return "bg-amber-500";
+  return "bg-red-500";
+}
+
+function MarketImpactGauge({ score }: { score: number | null | undefined }) {
+  const normalizedScore = Math.max(0, Math.min(100, score ?? 0));
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 text-xs font-extrabold uppercase tracking-wider text-muted">
+        <span>MarketImpactScore</span>
+        <span>{score ?? "--"}/100</span>
+      </div>
+      <div className="mt-2 h-3 rounded-full bg-slate-100">
+        <div className={`h-3 rounded-full ${impactScoreTone(score)}`} style={{ width: `${normalizedScore}%` }} />
+      </div>
+    </div>
+  );
 }
 
 export function NewsImpactClient() {
@@ -85,7 +117,9 @@ export function NewsImpactClient() {
       }
 
       const payload = await response.json() as FetchResponse;
-      setStatus(`Fetched ${payload.count} from ${payload.provider}; stored ${payload.stored} in ${payload.storage}.`);
+      setStatus(
+        `Fetched ${payload.count} from ${payload.provider}; stored ${payload.stored} in ${payload.storage}; analyzed ${payload.impact_analyzed} impact records.`
+      );
       await loadArticles();
     } catch (error) {
       setSource("mock-fallback");
@@ -103,9 +137,9 @@ export function NewsImpactClient() {
   return (
     <div className="grid gap-6">
       <SectionHeader
-        eyebrow="Daily financial news collection"
+        eyebrow="News-to-market impact engine"
         title="News Impact Page"
-        description="Server routes collect financial news from NewsAPI or Financial Modeling Prep, store normalized articles in Supabase, and fall back safely when credentials are missing."
+        description="Server routes collect financial news, use OpenAI to generate structured market impact analysis, store results in Supabase, and fall back safely when credentials are missing."
       />
 
       <Card>
@@ -114,6 +148,7 @@ export function NewsImpactClient() {
             <div className="flex flex-wrap gap-2">
               <Badge tone={sourceTone(source)}>{source}</Badge>
               <Badge tone="teal">Server-side API</Badge>
+              <Badge tone="slate">OpenAI impact engine</Badge>
               <Badge tone="slate">Supabase storage</Badge>
             </div>
             <p className="mt-3 text-sm font-bold text-muted">{status}</p>
@@ -159,7 +194,12 @@ export function NewsImpactClient() {
           {articles.map((article) => (
             <Card key={article.url}>
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <Badge tone={article.provider === "mock" ? "amber" : "teal"}>{article.provider ?? source}</Badge>
+                <div className="flex flex-wrap gap-2">
+                  <Badge tone={classificationTone(article.market_classification)}>
+                    {article.market_classification ?? "unscored"}
+                  </Badge>
+                  <Badge tone={article.provider === "mock" ? "amber" : "teal"}>{article.provider ?? source}</Badge>
+                </div>
                 <span className="text-xs font-extrabold text-muted">{formatTime(article.published_time)}</span>
               </div>
               <h3 className="mt-3 text-lg font-black leading-snug">
@@ -167,14 +207,46 @@ export function NewsImpactClient() {
                   {article.title}
                 </a>
               </h3>
-              <p className="mt-2 text-sm font-bold text-muted">{article.source}</p>
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted">{article.raw_description}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-muted">
+                <span>{article.source}</span>
+                <a href={article.url} target="_blank" rel="noreferrer" className="text-teal-700 hover:text-teal-900">
+                  Source link
+                </a>
+              </div>
+              <div className="mt-5">
+                <MarketImpactGauge score={article.market_impact_score} />
+              </div>
+              <div className="mt-4 rounded-lg bg-slate-50 p-4">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-muted">Summary</p>
+                <p className="mt-2 text-sm leading-6 text-slate-800">{article.short_summary ?? article.raw_description}</p>
+              </div>
+              <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <dt className="font-bold text-muted">Confidence</dt>
+                  <dd className="mt-1 text-xl font-black">{article.confidence_score ?? "--"}%</dd>
+                </div>
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <dt className="font-bold text-muted">Sector</dt>
+                  <dd className="mt-1 font-extrabold">{article.related_sectors?.join(", ") || "Not classified"}</dd>
+                </div>
+              </dl>
+              <div className="mt-4 grid gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-muted">Why it matters</p>
+                  <p className="mt-1 text-sm leading-6 text-muted">{article.why_it_matters_financially ?? "Impact analysis has not been generated yet."}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-muted">Short explanation</p>
+                  <p className="mt-1 text-sm leading-6 text-muted">{article.beginner_explanation ?? article.raw_description}</p>
+                </div>
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {article.related_tickers.length ? (
                   article.related_tickers.map((ticker) => <Badge key={ticker}>{ticker}</Badge>)
                 ) : (
                   <Badge>No matched ticker</Badge>
                 )}
+                {article.related_etfs?.map((ticker) => <Badge key={ticker} tone="teal">{ticker}</Badge>)}
               </div>
             </Card>
           ))}
