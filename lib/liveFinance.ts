@@ -25,6 +25,7 @@ export const DEFAULT_SYMBOLS = ["SPY.US", "QQQ.US", "DIA.US", "AAPL.US", "MSFT.U
 export const DEFAULT_NEWS_QUERY = "stock market finance earnings when:1d";
 
 const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+const RSS_JSON_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
 const NEWS_KEYWORDS = [
   "earnings",
   "guidance",
@@ -151,12 +152,37 @@ function scoreHeadline(title: string): Pick<LiveNewsItem, "impact" | "sentiment"
 
 export async function fetchFinancialNews(query: string): Promise<LiveNewsItem[]> {
   const newsUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
-  const response = await fetchWithTimeout(proxied(newsUrl));
 
+  const jsonResponse = await fetchWithTimeout(`${RSS_JSON_PROXY}${encodeURIComponent(newsUrl)}`);
+  if (jsonResponse.ok) {
+    const payload = await jsonResponse.json() as {
+      items?: Array<{
+        title?: string;
+        link?: string;
+        pubDate?: string;
+        author?: string;
+      }>;
+    };
+
+    const items = payload.items ?? [];
+    return items.slice(0, 12).map((item) => {
+      const title = item.title ?? "";
+      const scored = scoreHeadline(title);
+
+      return {
+        title,
+        source: item.author || "Google News",
+        link: item.link ?? "",
+        publishedAt: item.pubDate ?? "",
+        ...scored
+      };
+    }).filter((item) => item.title && item.link);
+  }
+
+  const response = await fetchWithTimeout(proxied(newsUrl));
   if (!response.ok) {
     throw new Error(`News source returned ${response.status}`);
   }
-
   const xml = await response.text();
   const document = new DOMParser().parseFromString(xml, "text/xml");
 
