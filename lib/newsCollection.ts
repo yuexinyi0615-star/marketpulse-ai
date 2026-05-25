@@ -42,6 +42,21 @@ export type MarketImpactAnalysis = {
   beginner_explanation: string;
 };
 
+export type DailyMarketOutlook = {
+  id?: string;
+  outlook_date: string;
+  generated_at: string;
+  market_tone: "bullish" | "bearish" | "neutral";
+  outlook_summary: string;
+  key_themes: string[];
+  opportunities: string[];
+  risks: string[];
+  watchlist: string[];
+  beginner_explanation: string;
+  source_article_ids: string[];
+  model: string;
+};
+
 export const NEWS_TOPICS = [
   "U.S. stock market",
   "Federal Reserve",

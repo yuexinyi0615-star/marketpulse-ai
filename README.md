@@ -10,6 +10,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Supabase client and server storage route helpers
 - Daily Financial News Collection API routes
 - OpenAI-powered News-to-Market Impact Engine
+- Secure Vercel Cron daily market update
 - Browser-loaded public market quotes and financial news RSS
 - Static report and learning templates
 
@@ -21,6 +22,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Company Search: `/company-search`
 - Reports Library Placeholder: `/reports`
 - Learning Center Placeholder: `/learning`
+- Admin Manual Refresh: `/admin`
 
 ## Target Users
 
@@ -40,9 +42,10 @@ NEWSAPI_API_KEY=
 FMP_API_KEY=
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
+CRON_SECRET=
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY`, `NEWSAPI_API_KEY`, `FMP_API_KEY`, and `OPENAI_API_KEY` are server-only values. Do not prefix them with `NEXT_PUBLIC_`, and do not commit them.
+`SUPABASE_SERVICE_ROLE_KEY`, `NEWSAPI_API_KEY`, `FMP_API_KEY`, `OPENAI_API_KEY`, and `CRON_SECRET` are server-only values. Do not prefix them with `NEXT_PUBLIC_`, and do not commit them.
 
 If provider, Supabase, or OpenAI keys are missing, `/api/news/fetch` and `/api/news/list` return mock fallback articles and fallback impact analysis so the News Impact page still works during development.
 
@@ -54,10 +57,17 @@ Routes:
 
 - `POST /api/news/fetch`: fetches daily financial news from NewsAPI first, then Financial Modeling Prep if configured, normalizes related tickers, generates OpenAI market impact analysis, and stores articles plus analysis in Supabase.
 - `GET /api/news/list`: lists stored articles from Supabase with mock fallback data if credentials are missing.
+- `GET|POST /api/cron/daily-market-update`: secure daily update route for Vercel Cron and manual admin refresh. Requires `Authorization: Bearer $CRON_SECRET`.
 
 Tracked themes include U.S. stock market, Federal Reserve, interest rates, inflation, Treasury yields, technology stocks, energy, banks, crypto, commodities, major earnings, selected large-cap tickers, and sector ETFs.
 
 The impact engine stores summary, financial relevance, related companies, related tickers, related ETFs, related sectors, bullish/bearish/neutral classification, MarketImpactScore, confidence score, short-term impact, medium-term impact, risk factors, alternative scenario, and a beginner-friendly explanation.
+
+## Automatic Daily Update
+
+`vercel.json` configures Vercel Cron to call `/api/cron/daily-market-update` at `22:30 UTC` Monday-Friday, which is `06:30 Singapore time` Tuesday-Saturday. This runs after the U.S. market close in both daylight-saving and standard-time periods.
+
+The admin page at `/admin` can manually trigger the same secure route. The browser never receives stored secrets; an admin must enter the `CRON_SECRET` locally before pressing the refresh button. All UI timestamps are shown in Singapore time.
 
 ## Run Locally
 

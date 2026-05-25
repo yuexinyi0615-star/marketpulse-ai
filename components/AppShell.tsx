@@ -8,7 +8,8 @@ const navItems = [
   ["News Impact", "/news-impact"],
   ["Company Search", "/company-search"],
   ["Reports", "/reports"],
-  ["Learning", "/learning"]
+  ["Learning", "/learning"],
+  ["Admin", "/admin"]
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

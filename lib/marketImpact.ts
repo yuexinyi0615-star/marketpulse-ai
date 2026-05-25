@@ -39,7 +39,7 @@ function clampScore(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
-function parseOpenAIText(payload: unknown) {
+export function parseOpenAIText(payload: unknown) {
   const response = payload as {
     output_text?: string;
     output?: Array<{

@@ -15,6 +15,7 @@ import {
   type LiveNewsItem,
   type LiveQuote
 } from "@/lib/liveFinance";
+import { formatSingaporeTime } from "@/lib/time";
 
 type ViewMode = "home" | "market" | "news";
 
@@ -45,15 +46,7 @@ function toneForSentiment(sentiment: LiveNewsItem["sentiment"]): "teal" | "amber
 }
 
 function sourceTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  }).format(date);
+  return formatSingaporeTime(value);
 }
 
 function sparkPath(quotes: LiveQuote[]) {
@@ -158,7 +151,7 @@ export function LiveMarketDashboard({ mode = "home" }: { mode?: ViewMode }) {
         news,
         loading: false,
         error: errors.join(" "),
-        updatedAt: new Date().toLocaleString()
+        updatedAt: formatSingaporeTime(new Date())
       });
     }
   }, [newsQuery, symbols]);

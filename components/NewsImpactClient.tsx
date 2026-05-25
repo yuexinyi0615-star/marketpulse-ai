@@ -6,6 +6,7 @@ import { Card } from "@/components/Card";
 import { Disclaimer } from "@/components/Disclaimer";
 import { SectionHeader } from "@/components/SectionHeader";
 import { MOCK_NEWS_ARTICLES, NEWS_TOPICS, TRACKED_TICKERS, type NewsArticle } from "@/lib/newsCollection";
+import { formatSingaporeTime } from "@/lib/time";
 
 type ListResponse = {
   ok: boolean;
@@ -25,18 +26,6 @@ type FetchResponse = {
   articles: NewsArticle[];
   error?: string;
 };
-
-function formatTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Unknown time";
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  }).format(date);
-}
 
 function sourceTone(source: string): "teal" | "amber" | "slate" {
   if (source === "supabase") return "teal";
@@ -200,7 +189,7 @@ export function NewsImpactClient() {
                   </Badge>
                   <Badge tone={article.provider === "mock" ? "amber" : "teal"}>{article.provider ?? source}</Badge>
                 </div>
-                <span className="text-xs font-extrabold text-muted">{formatTime(article.published_time)}</span>
+                <span className="text-xs font-extrabold text-muted">{formatSingaporeTime(article.published_time)}</span>
               </div>
               <h3 className="mt-3 text-lg font-black leading-snug">
                 <a href={article.url} target="_blank" rel="noreferrer" className="hover:text-teal-700">
