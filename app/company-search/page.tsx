@@ -7,8 +7,8 @@ export default function CompanySearchPage() {
     <AppShell>
       <SectionHeader
         eyebrow="Company search"
-        title="Live company quote search"
-        description="Search live public quote data in the browser, then jump to external company research sources."
+        title="Company and ETF research search"
+        description="Search by ticker, company name, sector, industry, ETF, or keyword. FMP data is used server-side when configured, with mock fallback data for development."
       />
       <CompanySearchClient />
     </AppShell>

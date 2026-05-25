@@ -10,6 +10,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Supabase client and server storage route helpers
 - Daily Financial News Collection API routes
 - OpenAI-powered News-to-Market Impact Engine
+- Company Search and Company Detail research pages
 - Secure Vercel Cron daily market update
 - Browser-loaded public market quotes and financial news RSS
 - Static report and learning templates
@@ -20,6 +21,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Market Dashboard: `/market`
 - News Impact Page: `/news-impact`
 - Company Search: `/company-search`
+- Company Detail: `/company/[symbol]`
 - Reports Library Placeholder: `/reports`
 - Learning Center Placeholder: `/learning`
 - Admin Manual Refresh: `/admin`
@@ -68,6 +70,20 @@ The impact engine stores summary, financial relevance, related companies, relate
 `vercel.json` configures Vercel Cron to call `/api/cron/daily-market-update` at `22:30 UTC` Monday-Friday, which is `06:30 Singapore time` Tuesday-Saturday. This runs after the U.S. market close in both daylight-saving and standard-time periods.
 
 The admin page at `/admin` can manually trigger the same secure route. The browser never receives stored secrets; an admin must enter the `CRON_SECRET` locally before pressing the refresh button. All UI timestamps are shown in Singapore time.
+
+## Company Research
+
+Routes:
+
+- `GET /api/company/search?q=...`: searches by ticker, company name, sector, industry, ETF, or keyword.
+- `GET /api/company/[symbol]`: returns company overview, price data, performance, fundamentals, valuation ratios, latest news, related ETFs, competitors, and research guidance.
+
+Pages:
+
+- `/company-search`: visual search page for tickers, companies, sectors, industries, ETFs, and keywords.
+- `/company/[symbol]`: company detail dashboard with overview, market data, valuation, fundamentals, AI analysis, technical/fundamental placeholders, latest news, and a beginner learning section.
+
+When `FMP_API_KEY` is configured, company routes use Financial Modeling Prep server-side. If the key is missing or an upstream request fails, the app uses mock company data.
 
 ## Run Locally
 
