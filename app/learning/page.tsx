@@ -3,7 +3,7 @@ import { Badge } from "@/components/Badge";
 import { Card } from "@/components/Card";
 import { Disclaimer } from "@/components/Disclaimer";
 import { SectionHeader } from "@/components/SectionHeader";
-import { learningModules } from "@/data/mockMarket";
+import { learningModules } from "@/data/staticContent";
 
 export default function LearningPage() {
   return (

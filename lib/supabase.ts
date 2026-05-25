@@ -10,5 +10,5 @@ export const supabase = hasSupabaseConfig
   : null;
 
 export function getDataModeLabel() {
-  return hasSupabaseConfig ? "Supabase connected" : "Mock data mode";
+  return hasSupabaseConfig ? "Supabase connected" : "Browser live data";
 }

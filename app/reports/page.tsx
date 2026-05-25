@@ -2,7 +2,7 @@ import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/Badge";
 import { Card } from "@/components/Card";
 import { SectionHeader } from "@/components/SectionHeader";
-import { reports } from "@/data/mockMarket";
+import { reports } from "@/data/staticContent";
 
 export default function ReportsPage() {
   return (

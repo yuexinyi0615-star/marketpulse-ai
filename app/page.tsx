@@ -2,12 +2,9 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/Badge";
 import { Card } from "@/components/Card";
-import { Disclaimer } from "@/components/Disclaimer";
-import { Heatmap } from "@/components/Heatmap";
-import { LineChart } from "@/components/LineChart";
-import { MetricCard } from "@/components/MetricCard";
+import { LiveMarketDashboard } from "@/components/LiveMarketDashboard";
 import { SectionHeader } from "@/components/SectionHeader";
-import { marketMetrics, newsImpacts, reports, sectorSignals, trendSeries } from "@/data/mockMarket";
+import { reports } from "@/data/staticContent";
 
 const audiences = [
   {
@@ -20,7 +17,7 @@ const audiences = [
   },
   {
     label: "Professional users",
-    description: "Fast signal triage, decision-ready briefs, prediction tracking, and portfolio watch workflows."
+    description: "Fast signal triage, decision-ready briefs, source review, and portfolio watch workflows."
   }
 ];
 
@@ -36,7 +33,7 @@ export default function HomePage() {
             </h1>
             <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
               MarketPulse AI helps students and professionals interpret news, visualize market pressure, organize company research,
-              and track predictions using mock data until live API keys are configured.
+              and build research notes from browser-loaded public finance sources without committing secrets.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link className="rounded-lg bg-teal-600 px-5 py-3 text-sm font-extrabold text-white hover:bg-teal-700" href="/market">
@@ -51,54 +48,34 @@ export default function HomePage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wider text-teal-700">Live workspace preview</p>
-                <h2 className="mt-2 text-2xl font-black">Signal stack</h2>
+                <h2 className="mt-2 text-2xl font-black">Chrome-ready data flow</h2>
               </div>
-              <Badge tone="amber">Mock data</Badge>
+              <Badge tone="teal">Live browser data</Badge>
             </div>
             <div className="mt-6 grid gap-3">
-              {newsImpacts.map((impact) => (
-                <div key={impact.headline} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <strong>{impact.asset}</strong>
-                    <Badge tone={impact.sentiment === "Positive" ? "teal" : impact.sentiment === "Negative" ? "red" : "amber"}>
-                      {impact.impactScore}
-                    </Badge>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-muted">{impact.headline}</p>
-                </div>
-              ))}
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <strong>Market quotes</strong>
+                <p className="mt-2 text-sm leading-6 text-muted">The dashboard requests public quote CSV data directly from the visitor&apos;s browser.</p>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <strong>Newest financial headlines</strong>
+                <p className="mt-2 text-sm leading-6 text-muted">The news feed reads Google News RSS in the browser and labels headline drivers transparently.</p>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <strong>Local watchlist settings</strong>
+                <p className="mt-2 text-sm leading-6 text-muted">Symbols and search settings stay in Chrome local storage, not in the codebase.</p>
+              </div>
             </div>
           </Card>
         </section>
 
-        <Disclaimer />
-
-        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {marketMetrics.map((metric) => (
-            <MetricCard key={metric.label} metric={metric} />
-          ))}
-        </section>
-
-        <section className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-          <Card>
-            <SectionHeader
-              eyebrow="Market dashboard"
-              title="Impact and sentiment trend"
-              description="A visual placeholder for market data integrations, designed for quick classroom or professional interpretation."
-            />
-            <LineChart points={trendSeries} />
-          </Card>
-          <Card>
-            <SectionHeader eyebrow="Heatmap" title="Sector signal map" />
-            <Heatmap sectors={sectorSignals} />
-          </Card>
-        </section>
+        <LiveMarketDashboard />
 
         <section>
           <SectionHeader
             eyebrow="Target users"
             title="Three learning and workflow modes"
-            description="The same market data can be framed differently depending on the user's level and goals."
+            description="The same live market data can be framed differently depending on the user's level and goals."
           />
           <div className="grid gap-4 md:grid-cols-3">
             {audiences.map((audience) => (

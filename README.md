@@ -8,23 +8,23 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - TypeScript
 - Tailwind CSS
 - Supabase placeholder client
-- Mock market, news, company, report, learning, and prediction data
+- Browser-loaded public market quotes and financial news RSS
+- Static report and learning templates
 
 ## Pages
 
 - Home Dashboard: `/`
 - Market Dashboard: `/market`
 - News Impact Page: `/news-impact`
-- Company Search Placeholder: `/company-search`
+- Company Search: `/company-search`
 - Reports Library Placeholder: `/reports`
 - Learning Center Placeholder: `/learning`
-- Prediction Tracker Placeholder: `/predictions`
 
 ## Target Users
 
 - Undergraduate students learning how market signals connect to business fundamentals
 - Graduate students building evidence-weighted research workflows
-- Professional users triaging news, sectors, reports, and prediction outcomes
+- Professional users triaging news, sectors, reports, and live watchlists
 
 ## Environment
 
@@ -35,7 +35,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-If Supabase keys are missing, the app uses mock data mode.
+The current GitHub Pages build does not require API keys. Live quotes and news are loaded in the visitor's browser from public sources, and watchlist settings are stored in browser local storage. For production-grade reliability, route licensed data providers through Supabase Edge Functions or another backend so private keys are never exposed.
 
 ## Run Locally
 
@@ -60,4 +60,4 @@ https://yuexinyi0615-star.github.io/marketpulse-ai/
 
 ## Disclaimer
 
-MarketPulse AI is for financial education and research workflow support. It does not provide investment advice, personalized recommendations, or instructions to buy or sell securities. All mock scores and predictions must be independently verified before use in any financial decision.
+MarketPulse AI is for financial education and research workflow support. It does not provide investment advice, personalized recommendations, or instructions to buy or sell securities. Live source data, headline labels, and browser-generated scores must be independently verified before use in any financial decision.
