@@ -11,6 +11,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Daily Financial News Collection API routes
 - OpenAI-powered News-to-Market Impact Engine
 - Company Search and Company Detail research pages
+- Reports Library with visual market, company, economic, sector, and prediction reports
 - Secure Vercel Cron daily market update
 - Browser-loaded public market quotes and financial news RSS
 - Static report and learning templates
@@ -23,6 +24,7 @@ Stage 1 MVP foundation for a visual-first market intelligence and financial educ
 - Company Search: `/company-search`
 - Company Detail: `/company/[symbol]`
 - Reports Library Placeholder: `/reports`
+- Report Detail: `/reports/[slug]`
 - Learning Center Placeholder: `/learning`
 - Admin Manual Refresh: `/admin`
 
@@ -84,6 +86,21 @@ Pages:
 - `/company/[symbol]`: company detail dashboard with overview, market data, valuation, fundamentals, AI analysis, technical/fundamental placeholders, latest news, and a beginner learning section.
 
 When `FMP_API_KEY` is configured, company routes use Financial Modeling Prep server-side. If the key is missing or an upstream request fails, the app uses mock company data.
+
+## Reports Library
+
+Routes:
+
+- `GET /api/reports`: lists report records from Supabase with mock fallback reports.
+- `GET /api/reports/[slug]`: returns one report by slug.
+- `POST /api/reports/generate`: secured scheduled generation placeholder for future AI report creation. Requires `Authorization: Bearer $CRON_SECRET`.
+
+Pages:
+
+- `/reports`: visual reports library with summary cards and report graphics.
+- `/reports/[slug]`: individual report page with executive summary, market movements, top news, stocks/ETFs, sector performance, technical/fundamental/macro/sentiment analysis, AI interpretation, risks, learning takeaways, and disclaimer.
+
+Apply `supabase/migrations/202605250004_create_reports.sql` to create the `reports` table. Mock reports cover Daily, Weekly, Monthly, Quarterly, Annual, Company Annual, Company Quarterly, Economic Data, Sector Rotation, and Prediction Accuracy report types.
 
 ## Run Locally
 
